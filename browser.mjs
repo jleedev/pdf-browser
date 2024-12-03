@@ -58,7 +58,7 @@ function showPrimitive(x) {
   if (typeof x === "object" && x && "name" in x) {
     const el = document.createElement("var");
     el.className = "name";
-    el.textContent = "/" + x.name;
+    el.append("/", escapeString(x.name));
     return el;
   } else if (typeof x === "string") {
     const q = document.createElement("q");

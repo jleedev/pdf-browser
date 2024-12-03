@@ -1,0 +1,75 @@
+<!doctype html>
+<title>PDF Object Browser</title>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width">
+<script type="importmap">
+  {
+    "imports": {
+      "mozilla/pdf.js/": "https://cdn.jsdelivr.net/gh/mozilla/pdf.js@master/"
+    }
+  }
+</script>
+<link rel=stylesheet href=browser.css>
+
+<div id=loading>
+  <progress></progress>
+</div>
+
+<div id=intro hidden>
+  <input type=file id=file name=file accept=".pdf,application/pdf">
+  <p>?file=<i>file_url</i> - fetch file
+</div>
+
+<div id=content hidden>
+</div>
+
+<script type="module">
+
+  import { createDocument, createBrowser } from "./browser.mjs";
+
+  addEventListener("toggle", function(event) {
+    requestAnimationFrame(() =>
+      event.target.scrollIntoView({ block:"nearest" }));
+  }, { capture:true });
+
+  function showBuf(buf) {
+    const doc = createDocument(buf);
+    window.doc = doc;
+    const ele = createBrowser(doc);
+    document.getElementById("content").append(ele);
+    document.getElementById("intro").setAttribute("hidden", "");
+    document.getElementById("content").removeAttribute("hidden");
+    ele.querySelector("summary").focus();
+  }
+
+  const fileInput = document.querySelector('input[type=file]');
+  fileInput.value = '';
+
+  fileInput.addEventListener('dragenter', function(event) {
+    event.target.animate([{ background: 'mark', color: 'marktext' }, {}], { duration: 300, direction: 'alternate-reverse', iterations: Infinity });
+  });
+
+  fileInput.addEventListener('dragleave', function(event) {
+    event.target.getAnimations().forEach(a => a.cancel());
+  });
+
+  addEventListener("change", async function(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const buf = await file.arrayBuffer();
+    showBuf(buf);
+  });
+
+  const url = new URL(location);
+  if (url.searchParams.has("file")) {
+    const resp = await fetch(url.searchParams.get("file"));
+    if (!resp.ok) throw new Error(resp.statusCode);
+    const buf = await resp.arrayBuffer();
+    showBuf(buf);
+  } else {
+    document.getElementById("intro").removeAttribute("hidden");
+  }
+
+  document.getElementById("loading").setAttribute("hidden", "");
+
+</script>

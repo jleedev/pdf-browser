@@ -54,6 +54,7 @@
   });
 
   addEventListener("change", async function(event) {
+    event.target.getAnimations().forEach(a => a.cancel());
     const file = event.target.files?.[0];
     if (!file) return;
     const buf = await file.arrayBuffer();

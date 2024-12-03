@@ -19,6 +19,9 @@ summary:hover,
 details:has(summary:is(:hover,:focus-visible))>summary{
   background :#faf0e0;
 }
+details[open]:has(>:focus-visible) {
+  box-shadow: inset 0 0 4px 2px #dd6;
+}
 details > summary:first-of-type::before {
   content: "+ ";
   line-height: 1;

@@ -2,6 +2,15 @@ import { LocalPdfManager } from "mozilla/pdf.js/src/core/pdf_manager.js";
 import { isDict, Ref } from "mozilla/pdf.js/src/core/primitives.js";
 import { stringToPDFString } from "mozilla/pdf.js/src/shared/util.js";
 
+function t(tagName, ...contents) {
+  const el = document.createElement(tagName);
+  for (const x of contents) {
+    if (x instanceof Node || typeof x !== "object") el.append(x);
+    else Object.assign(el, x);
+  }
+  return el;
+}
+
 function chunkSize(len) {
   if (len <= 100) return 1;
   if (len <= 10_000) return 100;
@@ -12,10 +21,7 @@ function chunkSize(len) {
 }
 
 function showObjId(x) {
-  const el = document.createElement("var");
-  el.className = "ref";
-  el.textContent = x.objId;
-  return el;
+  return t("var", { className: "ref" }, x.objId);
 }
 
 const _escapeMap = {
@@ -32,10 +38,8 @@ const _escapeMap = {
 };
 
 function escapeChar(c) {
-  const sp = document.createElement("samp");
   c = _escapeMap[c] ?? ("\\" + c.charCodeAt(0).toString(8).padStart(3, "0"));
-  sp.append(c);
-  return sp;
+  return t("samp", c);
 }
 
 function escapeString(s) {
@@ -56,35 +60,22 @@ function escapeString(s) {
 
 function showPrimitive(x) {
   if (typeof x === "object" && x && "name" in x) {
-    const el = document.createElement("var");
-    el.className = "name";
-    el.append("/", escapeString(x.name));
-    return el;
+    return t("var", { className: "name" }, escapeString(x.name));
   } else if (typeof x === "string") {
-    const q = document.createElement("q");
     x = stringToPDFString(x);
     x = escapeString(x);
-    q.append(x);
+    return t("q", x);
     return q;
   } else if (x === null) {
-    const el = document.createElement("var");
-    el.className = "null";
-    el.textContent = "null";
-    return el;
+    return t("var", { className: "null" }, "null");
   } else {
-    const el = document.createElement("var");
-    el.className = typeof x;
-    el.textContent = x;
-    return el;
+    return t("var", { className: typeof x }, x);
   }
 }
 
 function createExpander(label, createContents, closeBehavior = 2) {
   if (typeof createContents !== "function") throw new TypeError();
-  const result = document.createElement("details");
-  const summary = document.createElement("summary");
-  summary.append(label);
-  result.append(summary);
+  const result = t("details", t("summary", label));
   switch (closeBehavior) {
     case 1:
       once(result, "toggle").then((event) =>
@@ -154,28 +145,19 @@ function once(target, type, options) {
 function Browser(xref, root = undefined) {
   function showArray(array, label) {
     return createExpander(label, () => {
-      const div = document.createElement("div");
-      div.className = "array";
-      div.append(showManyItems(array));
-      return div;
+      return t("div", { className: "array" }, showManyItems(array));
     });
   }
 
   function showArrayChunk(array, label) {
     return createExpander(label, () => {
-      const div = document.createElement("div");
-      div.className = "chunk";
-      div.append(showManyItems(array));
-      return div;
+      return t("div", { className: "chunk" }, showManyItems(array));
     });
   }
 
-  function showDictClosed(dict, label) {
+  function showDict(dict, label) {
     return createExpander(label, () => {
-      const div = document.createElement("div");
-      div.className = "dict";
-      div.append(showManyItems(dict));
-      return div;
+      return t("div", { className: "dict" }, showManyItems(dict));
     });
   }
 
@@ -218,9 +200,7 @@ function Browser(xref, root = undefined) {
       const obj = v instanceof Ref ? xref.fetch(v) : v;
       const key = document.createDocumentFragment();
       if (typeof k === "number") {
-        const ix = document.createElement("ins");
-        ix.append(k + ".");
-        key.append(ix);
+        key.append(t("ins", k + "."));
       } else {
         key.append(showPrimitive({ name: k }));
       }
@@ -228,21 +208,18 @@ function Browser(xref, root = undefined) {
       if (obj?.objId) key.append(" ", showObjId(obj));
       let row;
       if (isDict(obj)) {
-        key.append(" dict");
-        row = showDictClosed(obj, key);
+        key.append(" ", t("ins", "dict"));
+        row = showDict(obj, key);
       } else if (isDict(obj?.dict)) { // stream
-        const t = document.createTextNode("");
         const stream = obj.stream ?? obj.str ?? obj;
         const length = stream.maybeLength ?? stream.length;
-        t.nodeValue = length;
-        key.append(" ", showObjId(obj.dict), " ", t, " bytes");
+        key.append(showObjId(obj.dict), " ", t("ins", `${length} bytes`));
         row = showStreamClosed(obj, key);
       } else if (Array.isArray(obj)) {
-        key.append(` Array(${obj.length})`);
+        key.append(t("ins", `Array(${obj.length})`));
         row = showArray([...obj.entries()], key);
       } else {
-        row = document.createElement("div");
-        row.append(key, showPrimitive(obj));
+        row = t("div", key, showPrimitive(obj));
       }
       fr.append(row);
     }
@@ -253,11 +230,8 @@ function Browser(xref, root = undefined) {
     const memo = {};
     return createExpander(label, () => {
       const fr = document.createDocumentFragment();
-      const div = document.createElement("div");
-      div.className = "dict";
-      fr.append(div);
-      div.append(showManyItems(obj.dict));
-      fr.append(showStreamExpander(obj, memo));
+      const div = t("div", { className: "dict" }, showManyItems(obj.dict));
+      fr.append(div, showStreamExpander(obj, memo));
       return fr;
     });
   }
@@ -267,36 +241,20 @@ function Browser(xref, root = undefined) {
   }
 
   function showStreamData(obj, memo) {
-    const pre = document.createElement("pre");
-    const span = document.createElement("span");
-    pre.append(span);
     if (!memo.txt) {
       let buf = obj.getBytes();
       if (buf.length === 0) buf = obj.bytes; /* ??? */
       memo.txt = new TextDecoder("l1").decode(buf);
     }
-    span.append(memo.txt);
-    return pre;
-  }
-
-  function showDictOpen(dict, label) {
-    if (dict.objId) label.append(" ", dict.objId);
-    const result = createExpander(label, () => {
-      const div = document.createElement("div");
-      div.className = "dict";
-      div.append(showManyItems(dict));
-      return div;
-    });
-    result.open = true;
-    return result;
+    return t("pre", t("span", memo.txt));
   }
 
   if (arguments.length < 2) {
-    return showDictOpen(xref.trailer, "trailer");
+    return showDict(xref.trailer, "trailer");
   } else {
     const ref = Ref.fromString(root);
     const obj = xref.fetch(ref);
-    return showDictOpen(obj, ref);
+    return showDict(obj, ref);
   }
 }
 
@@ -325,6 +283,7 @@ function createBrowser(pdfDocument, root = undefined) {
   } else {
     result = new Browser(xref, root);
   }
+  result.open = true;
   keyEvents(result);
   return result;
 }

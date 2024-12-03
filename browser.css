@@ -32,6 +32,7 @@ q::before, q::after { color: deeppink; font-family: cursive; }
 q::before { content: "("; }
 q::after { content: ")"; }
 var.name { color: maroon; }
+var.name::before { color: deeppink; font-family: cursive; content: "/"; }
 var.ref { color: green; }
 var.number { color: blue; }
 var.boolean { color: orange; }

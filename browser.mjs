@@ -250,19 +250,19 @@ function Browser(xref, root = undefined) {
   }
 
   function showStreamClosed(obj, label) {
+    const memo = {};
     return createExpander(label, () => {
       const fr = document.createDocumentFragment();
       const div = document.createElement("div");
       div.className = "dict";
       fr.append(div);
       div.append(showManyItems(obj.dict));
-      fr.append(showStreamExpander(obj));
+      fr.append(showStreamExpander(obj, memo));
       return fr;
     });
   }
 
-  function showStreamExpander(obj) {
-    const memo = {};
+  function showStreamExpander(obj, memo) {
     return createExpander("stream data", () => showStreamData(obj, memo));
   }
 

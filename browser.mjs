@@ -46,7 +46,7 @@ function escapeString(s) {
     )
   ) {
     if (match[1]) {
-      fr.append(escapeChar(match[1]), '\u200b');
+      fr.append(escapeChar(match[1]), "\u200b");
     } else if (match[2]) {
       fr.append(match[2]);
     }
@@ -262,16 +262,20 @@ function Browser(xref, root = undefined) {
   }
 
   function showStreamExpander(obj) {
-    return createExpander("stream data", () => showStreamData(obj));
+    const memo = {};
+    return createExpander("stream data", () => showStreamData(obj, memo));
   }
 
-  function showStreamData(obj) {
+  function showStreamData(obj, memo) {
     const pre = document.createElement("pre");
     const span = document.createElement("span");
     pre.append(span);
-    let buf = obj.getBytes();
-    if (buf.length === 0) buf = obj.bytes; /* ??? */
-    span.append(new TextDecoder("l1").decode(buf));
+    if (!memo.txt) {
+      let buf = obj.getBytes();
+      if (buf.length === 0) buf = obj.bytes; /* ??? */
+      memo.txt = new TextDecoder("l1").decode(buf);
+    }
+    span.append(memo.txt);
     return pre;
   }
 

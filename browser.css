@@ -52,7 +52,7 @@ pre {
   overflow: auto;
   box-shadow: 0px 0px 2px inset black;
   max-height: 90vh;
-  background: #eee;
+  background: #f0f0f6;
   padding: 2px;
 }
 pre>span {

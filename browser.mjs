@@ -21,7 +21,7 @@ function chunkSize(len) {
 }
 
 function showObjId(x) {
-  return t("var", { className: "ref" }, x.objId);
+  return t("var", { className: "ref" }, x);
 }
 
 const _escapeMap = {
@@ -164,7 +164,7 @@ function Browser(xref, root = undefined) {
   function showManyItems(kv) {
     kv = [...kv];
     if (kv.length === 1) {
-      return showDictItems(kv);
+      return showItems(kv);
     }
     const fr = document.createDocumentFragment();
     if (!kv.length) return fr;
@@ -186,7 +186,7 @@ function Browser(xref, root = undefined) {
         }
         fr.append(showArrayChunk(chunk, label));
       } else {
-        fr.append(showDictItems(chunk));
+        fr.append(showItems(chunk));
       }
       start += c;
     }
@@ -194,10 +194,13 @@ function Browser(xref, root = undefined) {
     return fr;
   }
 
-  function showDictItems(dict) {
+  function showItems(entries) {
     const fr = document.createDocumentFragment();
-    for (const [k, v] of dict) {
+    for (const [k, v] of entries) {
+      let objId;
+      if (v instanceof Ref) objId = v.toString();
       const obj = v instanceof Ref ? xref.fetch(v) : v;
+      objId ??= obj?.objId?.toString();
       const key = document.createDocumentFragment();
       if (typeof k === "number") {
         key.append(t("ins", k + "."));
@@ -205,18 +208,18 @@ function Browser(xref, root = undefined) {
         key.append(showPrimitive({ name: k }));
       }
       key.append("\u2001");
-      if (obj?.objId) key.append(" ", showObjId(obj));
+      if (objId) key.append(showObjId(objId));
       let row;
       if (isDict(obj)) {
-        key.append(" ", t("ins", "dict"));
+        key.append("\u2001", t("ins", "dict"));
         row = showDict(obj, key);
       } else if (isDict(obj?.dict)) { // stream
         const stream = obj.stream ?? obj.str ?? obj;
         const length = stream.maybeLength ?? stream.length;
-        key.append(showObjId(obj.dict), " ", t("ins", `${length} bytes`));
+        key.append(showObjId(obj.dict.objId), "\u2001", t("ins", `${length} bytes`));
         row = showStreamClosed(obj, key);
       } else if (Array.isArray(obj)) {
-        key.append(t("ins", `Array(${obj.length})`));
+        key.append("\u2001", t("ins", `Array(${obj.length})`));
         row = showArray([...obj.entries()], key);
       } else {
         row = t("div", key, showPrimitive(obj));

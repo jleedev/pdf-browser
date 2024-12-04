@@ -207,19 +207,19 @@ function Browser(xref, root = undefined) {
       } else {
         key.append(showPrimitive({ name: k }));
       }
+      if (objId) key.append("\u2001", showObjId(objId));
       key.append("\u2001");
-      if (objId) key.append(showObjId(objId));
       let row;
       if (isDict(obj)) {
-        key.append("\u2001", t("ins", "dict"));
+        key.append(t("ins", "dict"));
         row = showDict(obj, key);
       } else if (isDict(obj?.dict)) { // stream
         const stream = obj.stream ?? obj.str ?? obj;
         const length = stream.maybeLength ?? stream.length;
-        key.append(showObjId(obj.dict.objId), "\u2001", t("ins", `${length} bytes`));
+        key.append(t("ins", `${length} bytes`));
         row = showStreamClosed(obj, key);
       } else if (Array.isArray(obj)) {
-        key.append("\u2001", t("ins", `Array(${obj.length})`));
+        key.append(t("ins", `Array(${obj.length})`));
         row = showArray([...obj.entries()], key);
       } else {
         row = t("div", key, showPrimitive(obj));

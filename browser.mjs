@@ -203,7 +203,7 @@ function Browser(xref, root = undefined) {
     let objId;
     if (v instanceof Ref) objId = v.toString();
     const obj = v instanceof Ref ? xref.fetch(v) : v;
-    objId ??= obj?.objId?.toString();
+    objId ??= obj?.objId?.toString() ?? obj?.dict?.objId;
     const key = document.createDocumentFragment();
     if (typeof k === "number") {
       key.append(t("ins", k + "."));

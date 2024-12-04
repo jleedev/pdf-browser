@@ -76,17 +76,22 @@ function showPrimitive(x) {
 function createExpander(label, createContents, closeBehavior = 2) {
   if (typeof createContents !== "function") throw new TypeError();
   const result = t("details", t("summary", label));
+  function wrapper() {
+    try {
+      return createContents();
+    } catch (err) {
+      return t("span", { className: "error" }, err.stack ?? err);
+    }
+  }
   switch (closeBehavior) {
     case 1:
-      once(result, "toggle").then((event) =>
-        event.target.append(createContents())
-      );
+      once(result, "toggle").then((event) => event.target.append(wrapper()));
       setSuspend(result);
       break;
     case 2:
       result.addEventListener("toggle", (event) => {
         if (event.newState === "open") {
-          event.target.append(createContents());
+          event.target.append(wrapper());
         } else {
           yankDetails(event.target);
         }
@@ -194,37 +199,47 @@ function Browser(xref, root = undefined) {
     return fr;
   }
 
+  function showItem(k, v) {
+    let objId;
+    if (v instanceof Ref) objId = v.toString();
+    const obj = v instanceof Ref ? xref.fetch(v) : v;
+    objId ??= obj?.objId?.toString();
+    const key = document.createDocumentFragment();
+    if (typeof k === "number") {
+      key.append(t("ins", k + "."));
+    } else {
+      key.append(showPrimitive({ name: k }));
+    }
+    if (objId) key.append("\u2001", showObjId(objId));
+    key.append("\u2001");
+    if (isDict(obj)) {
+      key.append(t("ins", "dict"));
+      return showDict(obj, key);
+    } else if (isDict(obj?.dict)) { // stream
+      const stream = obj.stream ?? obj.str ?? obj;
+      const length = stream.maybeLength ?? (() => {
+        try {
+          return stream.length;
+        } catch (err) {}
+      })();
+      key.append(t("ins", length === undefined ? "stream" : `${length} bytes`));
+      return showStreamClosed(obj, key);
+    } else if (Array.isArray(obj)) {
+      key.append(t("ins", `Array(${obj.length})`));
+      return showArray([...obj.entries()], key);
+    } else {
+      return t("div", key, showPrimitive(obj));
+    }
+  }
+
   function showItems(entries) {
     const fr = document.createDocumentFragment();
     for (const [k, v] of entries) {
-      let objId;
-      if (v instanceof Ref) objId = v.toString();
-      const obj = v instanceof Ref ? xref.fetch(v) : v;
-      objId ??= obj?.objId?.toString();
-      const key = document.createDocumentFragment();
-      if (typeof k === "number") {
-        key.append(t("ins", k + "."));
-      } else {
-        key.append(showPrimitive({ name: k }));
+      try {
+        fr.append(showItem(k, v));
+      } catch (err) {
+        fr.append(t("span", { className: "error" }, err.stack ?? err));
       }
-      if (objId) key.append("\u2001", showObjId(objId));
-      key.append("\u2001");
-      let row;
-      if (isDict(obj)) {
-        key.append(t("ins", "dict"));
-        row = showDict(obj, key);
-      } else if (isDict(obj?.dict)) { // stream
-        const stream = obj.stream ?? obj.str ?? obj;
-        const length = stream.maybeLength ?? stream.length;
-        key.append(t("ins", `${length} bytes`));
-        row = showStreamClosed(obj, key);
-      } else if (Array.isArray(obj)) {
-        key.append(t("ins", `Array(${obj.length})`));
-        row = showArray([...obj.entries()], key);
-      } else {
-        row = t("div", key, showPrimitive(obj));
-      }
-      fr.append(row);
     }
     return fr;
   }

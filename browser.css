@@ -103,3 +103,9 @@ pre {
 samp {
   color: orangered;
 }
+span.error {
+  white-space: pre-wrap;
+  color: red;
+  font: 80% monospace;
+  display: block;
+}

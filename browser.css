@@ -32,21 +32,17 @@ details[open] > summary:first-of-type::before {
   line-height: 1;
 }
 var { font: unset; }
-q::before, q::after { color: deeppink; font-family: cursive; }
+::before, ::after, ins { font-family: monospace; color: #333; }
+q::before, q::after { color: deeppink; }
 q::before { content: "("; }
 q::after { content: ")"; }
 var.name { color: maroon; }
-var.name::before { color: deeppink; font-family: cursive; content: "/"; }
+var.name::before { color: deeppink; content: "/"; }
 var.ref { color: green; }
 var.number { color: blue; }
 var.boolean { color: orange; }
 var.null { color: coral; }
-var.name, var.ref {
-  font-family: cursive;
-}
-summary {
-  font-family: sans-serif;
-}
+var.name, var.ref { font-family: cursive; }
 pre {
   white-space: pre-wrap;
   overflow: auto;
@@ -55,54 +51,25 @@ pre {
   background: #f0f0f6;
   padding: 2px;
 }
-pre>span {
-  background: #fff;
-}
-::before, ::after { font-family: cursive; color: #333; }
-.dict:empty::after {
-  content: "<<\2001>>";
-}
-.dict:not(:empty)>:first-child::before {
-  content: "<<\2001";
-}
-.dict:not(:empty)>:last-child::after {
-  content: "\2001>>";
-}
-.array:empty::after {
-  content: "[\2001]";
-}
-.array:not(:empty)>:first-child::before {
-  content: "[\2001";
-}
-.array:not(:empty)>:last-child::after {
-  content: "\2001]";
-}
-ins {
-  text-decoration: unset;
-  user-select: none;
-  font-family: sans-serif;
-  color: #333;
-}
+pre>span { background: #fff; }
+.dict:empty::after { content: "<<\2001>>"; }
+.dict:not(:empty)>:first-child::before { content: "<<\2001"; }
+.dict:not(:empty)>:last-child::after { content: "\2001>>"; }
+.array:empty::after { content: "[\2001]"; }
+.array:not(:empty)>:first-child::before { content: "[\2001"; }
+.array:not(:empty)>:last-child::after { content: "\2001]"; }
+ins { text-decoration: unset; user-select: none; }
 @media (pointer: coarse) {
-  body {
-    line-height: 2.5;
-  }
+  body { line-height: 2.5; }
 }
-pre {
-  line-height: normal;
-}
+pre { line-height: normal; }
 #loading {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   display: grid;
   place-items: center;
 }
-samp {
-  color: orangered;
-}
+samp { color: orangered; }
 span.error {
   white-space: pre-wrap;
   color: red;

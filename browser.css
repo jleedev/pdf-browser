@@ -2,6 +2,7 @@
   display: none !important;
 }
 body {
+  overflow-wrap: anywhere;
   color: black;
   background: white;
 }
@@ -48,7 +49,6 @@ summary {
 }
 pre {
   white-space: pre-wrap;
-  word-break: break-all;
   overflow: auto;
   box-shadow: 0px 0px 2px inset black;
   max-height: 90vh;

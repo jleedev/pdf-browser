@@ -1,10 +1,18 @@
+@font-face {
+  font-family: "Comic Shanns";
+  src: url(https://cdn.jsdelivr.net/gh/shannpersand/comic-shanns@1ef567b72ec35d271557cf2d5e77221ea7dec510/v2/comic%20shanns.otf);
+}
 [hidden] {
   display: none !important;
 }
 body {
+  font-family: "Comic Shanns";
   overflow-wrap: anywhere;
   color: black;
   background: white;
+}
+*,::-webkit-file-upload-button {
+  font-family: unset;
 }
 details[open] {
   box-shadow: inset 0 0 4px #0003;
@@ -32,7 +40,7 @@ details[open] > summary:first-of-type::before {
   line-height: 1;
 }
 var { font: unset; }
-::before, ::after, ins { font-family: monospace; color: #333; }
+::before, ::after, ins { color: #333; }
 q::before, q::after { color: deeppink; }
 q::before { content: "("; }
 q::after { content: ")"; }
@@ -42,7 +50,7 @@ var.ref { color: green; }
 var.number { color: blue; }
 var.boolean { color: orange; }
 var.null { color: coral; }
-var.name, var.ref { font-family: cursive; }
+var.name, var.ref {}
 pre {
   white-space: pre-wrap;
   overflow: auto;
@@ -62,7 +70,7 @@ ins { text-decoration: unset; user-select: none; }
 @media (pointer: coarse) {
   body { line-height: 2.5; }
 }
-pre { line-height: normal; }
+pre { line-height: 1; }
 #loading {
   position: absolute;
   inset: 0;

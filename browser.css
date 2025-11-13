@@ -5,6 +5,9 @@
 [hidden] {
   display: none !important;
 }
+:root {
+  color-scheme: light dark;
+}
 body {
   font-family: "Comic Shanns";
   overflow-wrap: anywhere;
@@ -15,7 +18,7 @@ body {
   font-family: unset;
 }
 details[open] {
-  box-shadow: inset 0 0 4px #0003;
+  box-shadow: inset 0 0 4px #ccc;
 }
 details>:not(summary) {
   padding-inline-start: 1vw;
@@ -40,7 +43,7 @@ details[open] > summary:first-of-type::before {
   line-height: 1;
 }
 var { font: unset; }
-::before, ::after, ins { color: #333; }
+::before, ::after, ins { color: rgba(from currentColor r g b / 0.8); }
 q::before, q::after { color: deeppink; }
 q::before { content: "("; }
 q::after { content: ")"; }
@@ -83,4 +86,30 @@ span.error {
   color: red;
   font: 80% monospace;
   display: block;
+}
+@media (prefers-color-scheme: dark) {
+  body {
+      color: white;
+      background: black;
+  }
+  summary:hover,
+  details:has(summary:is(:hover,:focus-visible))>summary{
+    background: transparent;
+    color: inherit;
+  }
+  var.name { color: tomato; }
+  var.name::before { color: deeppink; }
+  var.ref { color: skyblue; }
+  var.number { color: turquoise; }
+  var.boolean { color: orange; }
+  var.null { color: coral; }
+  pre {
+    box-shadow: 0px 0px 2px inset #ccc;
+    background: #060609;
+  }
+  pre>span { background: #000; }
+  samp { color: orangered; }
+  span.error {
+    color: red;
+  }
 }

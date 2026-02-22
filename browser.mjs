@@ -263,6 +263,7 @@ function Browser(xref, root = undefined) {
       let buf = obj.getBytes();
       if (buf.length === 0) buf = obj.bytes; /* ??? */
       memo.txt = new TextDecoder("l1").decode(buf);
+      memo.txt = memo.txt.replaceAll(/\r\n?/g, '\n');
     }
     return t("pre", t("span", memo.txt));
   }

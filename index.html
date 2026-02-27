@@ -26,6 +26,20 @@
 
 <script type="module">
 
+  try {
+    await import("./browser.mjs");
+  } catch (err) {
+    const dia = document.createElement("dialog");
+    dia.textContent = err;
+    dia.closedBy = "none";
+    document.body.append(dia);
+    dia.showModal();
+  }
+
+</script>
+
+<script type="module">
+
   import { createDocument, createBrowser } from "./browser.mjs";
 
   addEventListener("toggle", function(event) {

@@ -65,7 +65,6 @@ function showPrimitive(x) {
     x = stringToPDFString(x);
     x = escapeString(x);
     return t("q", x);
-    return q;
   } else if (x === null) {
     return t("var", { className: "null" }, "null");
   } else {

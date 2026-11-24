@@ -1,6 +1,4 @@
-import { LocalPdfManager } from "mozilla/pdf.js/src/core/pdf_manager.js";
-import { isDict, Ref } from "mozilla/pdf.js/src/core/primitives.js";
-import { stringToPDFString } from "mozilla/pdf.js/src/shared/util.js";
+import { LocalPdfManager, isDict, Ref, stringToPDFString } from "./pdfjs_internals.min.mjs";
 
 function t(tagName, ...contents) {
   const el = document.createElement(tagName);

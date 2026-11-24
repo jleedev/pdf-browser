@@ -2,58 +2,114 @@
   font-family: "Comic Shanns";
   src: url(https://cdn.jsdelivr.net/gh/shannpersand/comic-shanns@1ef567b72ec35d271557cf2d5e77221ea7dec510/v2/comic%20shanns.otf);
 }
+
 [hidden] {
   display: none !important;
 }
+
 :root {
   color-scheme: light dark;
 }
+
 body {
   font-family: "Comic Shanns";
   overflow-wrap: anywhere;
   color: black;
   background: white;
 }
-*,::-webkit-file-upload-button {
+
+input[type=file] {
+  cursor: pointer;
+}
+
+*,
+::-webkit-file-upload-button {
   font-family: unset;
 }
+
 details[open] {
   box-shadow: inset 0 0 4px #ccc;
 }
+
 details>:not(summary) {
   padding-inline-start: 1vw;
 }
+
 summary {
   cursor: pointer;
   display: inline-block;
 }
+
 summary:hover,
-details:has(summary:is(:hover,:focus-visible))>summary{
-  background :#faf0e0;
+details:has(summary:is(:hover, :focus-visible))>summary {
+  background: #faf0e0;
 }
+
 details[open]:has(>:focus-visible) {
   box-shadow: inset 0 0 4px 2px #dd6;
 }
-details > summary:first-of-type::before {
+
+details>summary:first-of-type::before {
   content: "+ ";
   line-height: 1;
 }
-details[open] > summary:first-of-type::before {
+
+details[open]>summary:first-of-type::before {
   content: "− ";
   line-height: 1;
 }
-var { font: unset; }
-::before, ::after, ins { color: rgba(from currentColor r g b / 0.8); }
-q::before, q::after { color: deeppink; }
-q::before { content: "("; }
-q::after { content: ")"; }
-var.name { color: maroon; }
-var.name::before { color: deeppink; content: "/"; }
-var.ref { color: green; }
-var.number { color: blue; }
-var.boolean { color: orange; }
-var.null { color: coral; }
-var.name, var.ref {}
+
+var {
+  font: unset;
+}
+
+::before,
+::after,
+ins {
+  color: rgba(from currentColor r g b / 0.8);
+}
+
+q::before,
+q::after {
+  color: deeppink;
+}
+
+q::before {
+  content: "(";
+}
+
+q::after {
+  content: ")";
+}
+
+var.name {
+  color: maroon;
+}
+
+var.name::before {
+  color: deeppink;
+  content: "/";
+}
+
+var.ref {
+  color: green;
+}
+
+var.number {
+  color: blue;
+}
+
+var.boolean {
+  color: orange;
+}
+
+var.null {
+  color: coral;
+}
+
+var.name,
+var.ref {}
+
 pre {
   white-space: pre-wrap;
   word-break: break-word;
@@ -63,53 +119,117 @@ pre {
   background: #f0f0f6;
   padding: 2px;
 }
-pre>span { background: #fff; }
-.dict:empty::after { content: "<<\2001>>"; }
-.dict:not(:empty)>:first-child::before { content: "<<\2001"; }
-.dict:not(:empty)>:last-child::after { content: "\2001>>"; }
-.array:empty::after { content: "[\2001]"; }
-.array:not(:empty)>:first-child::before { content: "[\2001"; }
-.array:not(:empty)>:last-child::after { content: "\2001]"; }
-ins { text-decoration: unset; user-select: none; }
-@media (pointer: coarse) {
-  body { line-height: 2.5; }
+
+pre>span {
+  background: #fff;
 }
-pre { line-height: 1; }
+
+.dict:empty::after {
+  content: "<<\2001>>";
+}
+
+.dict:not(:empty)>:first-child::before {
+  content: "<<\2001";
+}
+
+.dict:not(:empty)>:last-child::after {
+  content: "\2001>>";
+}
+
+.array:empty::after {
+  content: "[\2001]";
+}
+
+.array:not(:empty)>:first-child::before {
+  content: "[\2001";
+}
+
+.array:not(:empty)>:last-child::after {
+  content: "\2001]";
+}
+
+ins {
+  text-decoration: unset;
+  user-select: none;
+}
+
+@media (pointer: coarse) {
+  body {
+    line-height: 2.5;
+  }
+}
+
+pre {
+  line-height: 1;
+}
+
 #loading {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
 }
-samp { color: orangered; }
+
+samp {
+  color: orangered;
+}
+
 span.error {
   white-space: pre-wrap;
   color: red;
   font: 80% monospace;
   display: block;
 }
+
 @media (prefers-color-scheme: dark) {
   body {
-      color: white;
-      background: black;
+    color: white;
+    background: black;
   }
+
   summary:hover,
-  details:has(summary:is(:hover,:focus-visible))>summary{
+  details:has(summary:is(:hover, :focus-visible))>summary {
     background: transparent;
     color: inherit;
   }
-  var.name { color: tomato; }
-  var.name::before { color: deeppink; }
-  var.ref { color: skyblue; }
-  var.number { color: turquoise; }
-  var.boolean { color: orange; }
-  var.null { color: coral; }
+
+  var.name {
+    color: tomato;
+  }
+
+  var.name::before {
+    color: deeppink;
+  }
+
+  var.ref {
+    color: skyblue;
+  }
+
+  var.number {
+    color: turquoise;
+  }
+
+  var.boolean {
+    color: orange;
+  }
+
+  var.null {
+    color: coral;
+  }
+
   pre {
     box-shadow: 0px 0px 2px inset #ccc;
     background: #060609;
   }
-  pre>span { background: #000; }
-  samp { color: orangered; }
+
+  pre>span {
+    background: #000;
+  }
+
+  samp {
+    color: orangered;
+  }
+
   span.error {
     color: red;
   }

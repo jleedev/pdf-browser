@@ -1,9 +1,10 @@
 <!doctype html>
+<meta charset="utf-8">
+<link rel="icon" href="data:,"">
 <title>PDF Object Browser</title>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width">
-<link rel=icon href=data:>
-<link rel=stylesheet href=browser.css>
+<link rel=" stylesheet" href="browser.css">
+<meta name="color-scheme" content="light dark">
+<meta name="viewport" content="width=device-width">
 
 <div id=loading>
   <progress></progress>
@@ -14,8 +15,7 @@
   <p>?file=<i>file_url</i> - fetch file
 </div>
 
-<div id=content hidden>
-</div>
+<div id=content hidden></div>
 
 <script type="module">
 
@@ -35,14 +35,14 @@
 
   import { createDocument, createBrowser } from "./browser.mjs";
 
-  addEventListener("toggle", function(event) {
+  addEventListener("toggle", function (event) {
     requestAnimationFrame(() =>
-      event.target.scrollIntoView({ block:"nearest" }));
-  }, { capture:true });
+      event.target.scrollIntoView({ block: "nearest" }));
+  }, { capture: true });
 
   function showBuf(buf) {
     const doc = createDocument(buf);
-    window.doc = doc;
+    console.debug("doc =", window.doc = doc);
     const ele = createBrowser(doc);
     document.getElementById("content").append(ele);
     document.getElementById("intro").setAttribute("hidden", "");
@@ -53,20 +53,19 @@
   const fileInput = document.querySelector('input[type=file]');
   fileInput.value = '';
 
-  fileInput.addEventListener('dragenter', function(event) {
+  fileInput.addEventListener('dragenter', function (event) {
     event.target.animate([{ background: 'mark', color: 'marktext' }, {}], { duration: 300, direction: 'alternate-reverse', iterations: Infinity });
   });
 
-  fileInput.addEventListener('dragleave', function(event) {
+  fileInput.addEventListener('dragleave', function (event) {
     event.target.getAnimations().forEach(a => a.cancel());
   });
 
-  addEventListener("change", async function(event) {
+  addEventListener("change", function (event) {
     event.target.getAnimations().forEach(a => a.cancel());
     const file = event.target.files?.[0];
     if (!file) return;
-    const buf = await file.arrayBuffer();
-    showBuf(buf);
+    file.bytes().then((b) => showBuf(b));
   });
 
   const url = new URL(location);

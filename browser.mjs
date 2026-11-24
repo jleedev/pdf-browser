@@ -274,6 +274,9 @@ function Browser(xref, root = undefined) {
   }
 }
 
+/**
+ * @param {ArrayBuffer|Uint8Array} buf
+ */
 function createDocument(buf) {
   const manager = new LocalPdfManager({
     source: buf,
